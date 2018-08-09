@@ -1,4 +1,4 @@
-#include "mips.h"
+#include "trivial_mips.h"
 
 int _entry()
 {

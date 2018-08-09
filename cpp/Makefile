@@ -4,6 +4,7 @@ export CROSS_COMPILE ?= mipsel-linux-gnu-
 
 CXX=${CROSS_COMPILE}gcc
 LD=${CROSS_COMPILE}ld
+AR=${CROSS_COMPILE}ar
 OBJCOPY=${CROSS_COMPILE}objcopy
 OBJDUMP=${CROSS_COMPILE}objdump
 
@@ -13,8 +14,11 @@ BASES=$(SRCS:.cpp=.base.bin)
 EXTS=$(SRCS:.cpp=.ext.bin)
 EXTS=$(SRCS:.cpp=.s)
 
-CXXFLAGS=-c -ffreestanding -Wall -Werror -mxgot -EL -mips32 -O2 -std=c++11
+CFLAGS=-c -ffreestanding -Wall -mxgot -EL -mips32 -O2 -I include -include common.h
+CXXFLAGS=$(CFLAGS) -std=c++11
 LDFLAGS=-static -EL -nostdlib --nmagic
+
+export AR CFLAGS
 
 all: bootrom sram
 
@@ -38,12 +42,12 @@ split_bin: ../utility/split_bin.cpp
 %.bin: %.elf
 	$(OBJCOPY) -O binary -j .text -j .data -j .bss $< $@
 
-%.bootrom.elf: %.o startup.o linker.bootrom.ld
+%.bootrom.elf: %.o startup.o linker.bootrom.ld lib/libtinyc.a
 	mkdir -p bootrom
 	$(LD) $(LDFLAGS) -T linker.bootrom.ld -o $@ $^
 	$(OBJDUMP) -ald $@ > bootrom/$(basename $(basename $@)).s
 
-%.ram.elf: %.o startup.o linker.ram.ld
+%.ram.elf: %.o startup.o linker.ram.ld lib/libtinyc.a
 	mkdir -p ram
 	$(LD) $(LDFLAGS) -T linker.ram.ld -o $@ $^
 	$(OBJDUMP) -ald $@ > ram/$(basename $(basename $@)).s
@@ -60,5 +64,9 @@ linker.ram.ld: utility/linker.ld.S
 startup.o: utility/startup.s
 	$(CXX) $(CXXFLAGS) -o $@ $<
 
+lib/libtinyc.a:
+	make -C lib libtinyc.a
+
 clean:
 	rm -rf ram/ bootrom/ *.ld *.o split_bin convert_bin
+	make -C lib clean

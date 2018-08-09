@@ -1,4 +1,4 @@
-#include "mips.h"
+#include "trivial_mips.h"
 
 inline unsigned rand(unsigned &rand_seed)
 {
