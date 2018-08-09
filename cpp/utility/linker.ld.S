@@ -1,11 +1,7 @@
 ENTRY(_start);
 SECTIONS
-{    
-#ifdef BOOT_FROM_BOOTROM
-    . = 0xBFC00000;
-#else
-    . = 0x80000000;
-#endif
+{
+    . = TEXT_START;
 
     .text :
     {
@@ -16,8 +12,8 @@ SECTIONS
     }
 #ifdef BOOT_FROM_BOOTROM
 #else
-    . = 0x80100000;
-#endif    
+    . = DATA_START;
+#endif
     .data :
     {
         _data = .;
@@ -25,7 +21,14 @@ SECTIONS
         *(.bss*);
         *(.data);
         *(.rodata*);
-        *(COMMON)
+        *(COMMON);
+#ifndef BOOT_FROM_BOOTROM
+        _stack = _data + MEM_SIZE - 32;
+        _gp = ALIGN(16) + 0x7ff0;
+#else
+        _stack = DATA_START + MEM_SIZE - 32;
+        _gp = DATA_START + 0x7ff0;
+#endif
         _data_end = .;
     }    
     /DISCARD/ :

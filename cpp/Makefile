@@ -1,4 +1,5 @@
 SRCS=$(wildcard *.cpp)
+HEADERS=$(wildcard include/*.cpp)
 
 export CROSS_COMPILE ?= mipsel-linux-gnu-
 
@@ -17,6 +18,9 @@ EXTS=$(SRCS:.cpp=.s)
 CFLAGS=-c -ffreestanding -Wall -mxgot -EL -mips32 -O2 -I include -include common.h
 CXXFLAGS=$(CFLAGS) -std=c++11
 LDFLAGS=-static -EL -nostdlib --nmagic
+
+LINKDER_DEFS_MEM=-DMEM_SIZE=0x00100000 -DTEXT_START=0x80000000 -DDATA_START=0x80100000
+LINKDER_DEFS_BOOTROM=-DMEM_SIZE=0x00200000 -DTEXT_START=0xBFC00000 -DDATA_START=0x80000000
 
 export AR CFLAGS
 
@@ -39,7 +43,10 @@ convert_bin: ../utility/convert_bin.c
 split_bin: ../utility/split_bin.cpp
 	g++ -Wall -Werror -o $@ $<
 
-%.bin: %.elf
+%.bootrom.bin: %.bootrom.elf
+	$(OBJCOPY) -O binary -j .text $< $@
+
+%.ram.bin: %.ram.elf
 	$(OBJCOPY) -O binary -j .text -j .data -j .bss $< $@
 
 %.bootrom.elf: %.o startup.o linker.bootrom.ld lib/libtinyc.a
@@ -53,12 +60,12 @@ split_bin: ../utility/split_bin.cpp
 	$(OBJDUMP) -ald $@ > ram/$(basename $(basename $@)).s
 
 linker.bootrom.ld: utility/linker.ld.S
-	$(CXX) -E -P -DBOOT_FROM_BOOTROM $(CXXFLAGS) $< -o $@
+	$(CXX) -E -P $(LINKDER_DEFS_BOOTROM) $(CXXFLAGS) $< -o $@
 
 linker.ram.ld: utility/linker.ld.S
-	$(CXX) -E -P $(CXXFLAGS) $< -o $@
+	$(CXX) -E -P $(LINKDER_DEFS_MEM) $(CXXFLAGS) $< -o $@
 
-%.o: %.cpp mips.h
+%.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -o $@ $<
 
 startup.o: utility/startup.s
