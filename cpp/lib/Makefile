@@ -7,4 +7,5 @@ libtinyc.a: $(objs)
 clean:
 	rm -f *.o *.a *.s
 
--include rules.make
+%.o: %.c
+	${CROSS_COMPILE}gcc $(CFLAGS) -fno-pic -g -I ../include -c $< -nostdinc -nostdlib

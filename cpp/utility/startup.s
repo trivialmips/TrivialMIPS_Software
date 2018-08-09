@@ -1,10 +1,7 @@
 	.set	nomips16
 	.set	nomicromips
-	.text
-	.extern _Z6_entryv
 	.section .text.startup
 	.globl _start
-	.type _start, @function
 _start:
 	# setup exception handler
 	lui		$t2, 0x0040
@@ -14,7 +11,7 @@ _start:
 	la 		$sp, _stack
 	la		$gp, _gp
 	# jump to our code
-	jal 	_Z6_entryv
+	jal 	_main
 	nop
 
 _loop0:
@@ -23,7 +20,7 @@ _loop0:
 
 _exception:
     .org 0x380
-    jal exception
+    jal exception_handler
     nop
     j _loop0
     nop 
