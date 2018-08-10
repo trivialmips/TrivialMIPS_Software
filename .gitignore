@@ -3,11 +3,11 @@
 *.mif
 *.o
 *.a
+*.elf
 split_bin
 convert_bin
 obj/
 func_test/bin.lds
-func_test/main.elf
 func_test/dump.s
 cpp/bootrom
 cpp/ram
