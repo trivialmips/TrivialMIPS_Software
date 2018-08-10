@@ -21,7 +21,7 @@ SECTIONS
     {
         _data = .;
 #ifdef BOOT_FROM_BOOTROM
-        _stack = DATA_START + MEM_SIZE - 32;
+        _stack = ABSOLUTE(DATA_START + MEM_SIZE - 32);
 #else
         _stack = _data + MEM_SIZE - 32;
 #endif
@@ -29,7 +29,7 @@ SECTIONS
         *(.data*)
         *(.eh_frame)
 #ifdef BOOT_FROM_BOOTROM
-        _gp = DATA_START + 0x7ff0;
+        _gp = ABSOLUTE(DATA_START + 0x7ff0);
 #else
         _gp = ALIGN(16) + 0x7ff0;  
 #endif

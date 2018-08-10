@@ -1,7 +1,6 @@
-	.set	nomips16
-	.set	nomicromips
-	.section .text.startup
-	.globl _start
+	.set		noreorder
+	.globl 		_start
+	.section	.text.startup
 _start:
 	# setup exception handler
 	lui		$t2, 0x0040

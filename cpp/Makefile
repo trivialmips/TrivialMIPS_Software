@@ -15,14 +15,14 @@ BASES=$(SRCS:.cpp=.base.bin)
 EXTS=$(SRCS:.cpp=.ext.bin)
 EXTS=$(SRCS:.cpp=.s)
 
-CFLAGS=-c -ffreestanding -Wall -mxgot -fno-pic -EL -mips32 -O2 -I include -include common.h -include bootstrap.h
+CFLAGS=-nostdinc -nostdlib -ffreestanding -Wall -mxgot -fno-builtin -fno-PIC -fno-PIE -mno-abicalls -g -EL -mhard-float -mips32 -O2 -I include -include common.h -include bootstrap.h
 CXXFLAGS=$(CFLAGS) -std=c++11
 LDFLAGS=-static -EL -nostdlib --nmagic
 
 LINKDER_DEFS_MEM=-DMEM_SIZE=0x00100000 -DTEXT_START=0x80000000
 LINKDER_DEFS_BOOTROM=-DMEM_SIZE=0x00100000 -DTEXT_START=0xBFC00000 -DDATA_START=0x80700000
 
-export AR CFLAGS
+export CXX AR CFLAGS
 
 all: bootrom sram
 
@@ -52,12 +52,12 @@ split_bin: ../utility/split_bin.cpp
 %.bootrom.elf: %.o startup.o main.o linker.bootrom.ld lib/libtinyc.a
 	mkdir -p bootrom
 	$(LD) $(LDFLAGS) -T linker.bootrom.ld -o $@ $^
-	$(OBJDUMP) -ald $@ > bootrom/$(basename $(basename $@)).s
+	$(OBJDUMP) -aldS $@ > bootrom/$(basename $(basename $@)).s
 
 %.ram.elf: %.o startup.o main.o linker.ram.ld lib/libtinyc.a
 	mkdir -p ram
 	$(LD) $(LDFLAGS) -T linker.ram.ld -o $@ $^
-	$(OBJDUMP) -ald $@ > ram/$(basename $(basename $@)).s
+	$(OBJDUMP) -aldS $@ > ram/$(basename $(basename $@)).s
 
 linker.bootrom.ld: utility/linker.ld.S $(HEADERS)
 	$(CXX) -E -P -DBOOT_FROM_BOOTROM $(LINKDER_DEFS_BOOTROM) $(CXXFLAGS) $< -o $@
@@ -66,13 +66,13 @@ linker.ram.ld: utility/linker.ld.S $(HEADERS)
 	$(CXX) -E -P $(LINKDER_DEFS_MEM) $(CXXFLAGS) $< -o $@
 
 %.o: %.cpp $(HEADERS)
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 main.o: utility/main.c
-	$(CXX) $(CFLAGS) -o $@ $<
+	$(CXX) $(CFLAGS) -c -o $@ $<
 
 startup.o: utility/startup.s
-	$(CXX) $(CFLAGS) -o $@ $<
+	$(CXX) $(CFLAGS) -c -o $@ $<
 
 lib/libtinyc.a:
 	make -C lib libtinyc.a

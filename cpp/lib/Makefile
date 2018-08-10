@@ -1,11 +1,11 @@
-srcs=$(wildcard *.c)
-objs=$(srcs:.c=.o) 
+SRCS=$(wildcard *.c)
+OBJS=$(SRCS:.c=.o) 
 
-libtinyc.a: $(objs)
+libtinyc.a: $(OBJS)
 	$(AR) -cr $@ $^
 
 clean:
 	rm -f *.o *.a *.s
 
 %.o: %.c
-	${CROSS_COMPILE}gcc $(CFLAGS) -fno-pic -g -I ../include -c $< -nostdinc -nostdlib
+	$(CXX) $(CFLAGS) -I ../include -c -o $@ $<
