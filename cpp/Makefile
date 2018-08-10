@@ -3,7 +3,8 @@ HEADERS=$(wildcard include/*.cpp)
 
 export CROSS_COMPILE ?= mipsel-linux-gnu-
 
-CXX=${CROSS_COMPILE}gcc
+CC=${CROSS_COMPILE}gcc
+CXX=${CROSS_COMPILE}g++
 LD=${CROSS_COMPILE}ld
 AR=${CROSS_COMPILE}ar
 OBJCOPY=${CROSS_COMPILE}objcopy
@@ -22,7 +23,7 @@ LDFLAGS=-static -EL -nostdlib --nmagic
 LINKDER_DEFS_MEM=-DMEM_SIZE=0x00100000 -DTEXT_START=0x80000000
 LINKDER_DEFS_BOOTROM=-DMEM_SIZE=0x00100000 -DTEXT_START=0xBFC00000 -DDATA_START=0x80700000
 
-export CXX AR CFLAGS
+export CC CXX AR CFLAGS CXXFLAGS
 
 all: bootrom sram
 
@@ -60,19 +61,19 @@ split_bin: ../utility/split_bin.cpp
 	$(OBJDUMP) -aldS $@ > ram/$(basename $(basename $@)).s
 
 linker.bootrom.ld: utility/linker.ld.S $(HEADERS)
-	$(CXX) -E -P -DBOOT_FROM_BOOTROM $(LINKDER_DEFS_BOOTROM) $(CXXFLAGS) $< -o $@
+	$(CC) -E -P -DBOOT_FROM_BOOTROM $(LINKDER_DEFS_BOOTROM) $(CFLAGS) $< -o $@
 
 linker.ram.ld: utility/linker.ld.S $(HEADERS)
-	$(CXX) -E -P $(LINKDER_DEFS_MEM) $(CXXFLAGS) $< -o $@
+	$(CC) -E -P $(LINKDER_DEFS_MEM) $(CFLAGS) $< -o $@
 
 %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 main.o: utility/main.c
-	$(CXX) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 startup.o: utility/startup.s
-	$(CXX) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 lib/libtinyc.a:
 	make -C lib libtinyc.a

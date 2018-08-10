@@ -1,6 +1,8 @@
 
-#ifndef __MIPS_H__
-#define __MIPS_H__
+#ifndef __TRIVIAL_MIPS_H__
+#define __TRIVIAL_MIPS_H__
+
+// kept for compatibility
 
 #define SERIAL_ADDR 0xa3000000
 #define GPIO_ADDR 0xa6000000
