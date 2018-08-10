@@ -1,16 +1,12 @@
 #include <machine.h>
+#include <time.h>
 
 void udelay(int us)
 {
-    int count0, count1;
-    int debug = 0;
-    us *= CPU_COUNT_PER_US;
-    asm volatile("mfc0 %0,$9"
-                 : "=r"(count0));
+    unsigned start = get_us();
+    unsigned end;
     do
     {
-        asm volatile("mfc0 %0,$9"
-                     : "=r"(count1));
-    } while (count1 - count0 < us);
-    asm volatile("mtc0 %0,$23;" ::"r"(debug));
+        end = get_us();
+    } while (end - start < us);
 }
