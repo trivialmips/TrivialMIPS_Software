@@ -3,6 +3,11 @@
 
 #include <common.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+int puts(char *s);
 int printf (char *fmt, ...);
 int sprintf (char *buf, const char *fmt, ...);
 
@@ -20,5 +25,9 @@ void fclose(FILE* stream);
 char *fgets(char *s, int size, FILE *stream);
 int sscanf(const char *str, const char *fmt, ...);
 int getc(FILE* stream);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

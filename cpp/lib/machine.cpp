@@ -28,6 +28,9 @@ void write(void *addr, T data){
 RUN_FOR_ALL_TYPE(GENERATE_READ_FUNC)
 RUN_FOR_ALL_TYPE(GENERATE_WRITE_FUNC)
 
+void panic(){
+	asm volatile("teq $zero, $zero");
+}
 
 byte_t read_serial(){
 	while (!(read<byte_t>(UART_STATUS_ADDR) & UART_DATA_READY));

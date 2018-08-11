@@ -16,11 +16,11 @@ BASES=$(SRCS:.cpp=.base.bin)
 EXTS=$(SRCS:.cpp=.ext.bin)
 EXTS=$(SRCS:.cpp=.s)
 
-COMP_FLGAS=-nostdinc -nostdlib -ffreestanding -Wall -mxgot -fno-builtin -fno-PIC -fno-PIE -mno-abicalls -g -EL -mhard-float -mips32 -O2 -I include -include common.h -include bootstrap.h
+COMP_FLGAS=-nostdinc -nostdlib -ffunction-sections -fdata-sections -ffreestanding -Wall -mxgot -fno-builtin -fno-PIC -fno-PIE -mno-abicalls -g -EL -mhard-float -mips32 -Os -I include -include common.h -include bootstrap.h
 CXXFLAGS=$(COMP_FLGAS) -std=c++11
 CFLAGS=$(COMP_FLGAS) -Wno-implicit-function-declaration
 
-LDFLAGS=-static -EL -nostdlib --nmagic
+LDFLAGS=-static -EL -nostdlib --nmagic --gc-sections
 
 LINKDER_DEFS_MEM=-DMEM_SIZE=0x00100000 -DTEXT_START=0x80000000
 LINKDER_DEFS_BOOTROM=-DMEM_SIZE=0x00100000 -DTEXT_START=0xBFC00000 -DDATA_START=0x80700000

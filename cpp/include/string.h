@@ -1,6 +1,10 @@
 #ifndef STRING_H
 #define STRING_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 size_t strlen(const char *s);
 size_t strnlen(const char *s, size_t len);
 
@@ -20,6 +24,10 @@ void *memcpy(void *dst, const void *src, size_t n);
 int memcmp(const void *v1, const void *v2, size_t n);
 
 void bzero(void *s, size_t n);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

@@ -7,7 +7,7 @@ SECTIONS
     {
         _text = .;
         *(.text.startup)
-        *(.text)
+        *(.text*)
         *(.rodata*)
         *(.reginfo)
         *(.init)

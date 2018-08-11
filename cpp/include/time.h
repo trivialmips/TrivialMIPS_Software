@@ -1,5 +1,10 @@
 #ifndef _TIME_H_H
 #define _TIME_H_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef unsigned long _clock_t;
 typedef unsigned long clock_t;
 #define MSEC_PER_SEC 1000L
@@ -63,5 +68,9 @@ unsigned long get_ns();
 	total_us = stop_us - start_us; \
 
 #define TIMER_PRINT printf("Time: %u cycles, %u us", total_count, total_us);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
