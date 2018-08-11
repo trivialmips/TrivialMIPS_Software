@@ -23,6 +23,14 @@ void check_overlap(void *addr) {
     }
 }
 
+void wait_for_magic() {
+    uint32_t count = 0;
+    while (count < 4) {
+        if (read_serial() == 0x23) ++count;
+        else count = 0;
+    }
+}
+
 void *copy_from_flash(void *addr) {
     auto *ehdr = reinterpret_cast<elf32_ehdr *>(addr);
 
@@ -61,8 +69,8 @@ void *copy_from_flash(void *addr) {
 void *load_from_uart() {
     putstring("Send uint32 sequence: 0x23232323 OFFSET LENGTH");
     puts(" DATA...");
-    while (read_serial_word() != 0x23232323)
-        ; // wait until magic number
+    
+    wait_for_magic();
 
     auto *offset = reinterpret_cast<volatile byte_t *>(read_serial_word());
     word_t length = read_serial_word();
@@ -117,7 +125,7 @@ int _entry() {
         puts("Dump mode.");
         while(true) {
             puts("Send uint32 sequence: 0x23232323 OFFSET LENGTH");
-            while (read_serial_word() != 0x23232323); // wait until magic number
+            wait_for_magic();
             auto *offset = reinterpret_cast<volatile byte_t *>(read_serial_word());
             word_t length = read_serial_word();
 
