@@ -22,8 +22,7 @@ CFLAGS=$(COMP_FLGAS) -Wno-implicit-function-declaration
 
 LDFLAGS=-static -EL -nostdlib --nmagic --gc-sections
 
-LINKDER_DEFS_MEM=-DMEM_SIZE=0x00100000 -DTEXT_START=0x80000000
-LINKDER_DEFS_BOOTROM=-DMEM_SIZE=0x00100000 -DTEXT_START=0xBFC00000 -DDATA_START=0x80700000
+LINKDER_DEFS=-DMEM_SIZE=0x00100000
 
 export CC CXX AR CFLAGS CXXFLAGS
 
@@ -52,21 +51,21 @@ split_bin: ../utility/split_bin.cpp
 %.ram.bin: %.ram.elf
 	$(OBJCOPY) -O binary -j .text -j .data $< $@
 
-%.bootrom.elf: %.o startup.o main.o linker.bootrom.ld lib/libtinyc.a
+%.bootrom.elf: linker.bootrom.ld %.o startup.o main.o lib/libtinyc.a
 	mkdir -p bootrom
-	$(LD) $(LDFLAGS) -T linker.bootrom.ld -o $@ $^
+	$(LD) $(LDFLAGS) -T $< -o $@ $(filter-out $<,$^)
 	$(OBJDUMP) -aldS $@ > bootrom/$(basename $(basename $@)).s
 
-%.ram.elf: %.o startup.o main.o linker.ram.ld lib/libtinyc.a
+%.ram.elf: linker.ram.ld %.o startup.o main.o lib/libtinyc.a
 	mkdir -p ram
-	$(LD) $(LDFLAGS) -T linker.ram.ld -o $@ $^
+	$(LD) $(LDFLAGS) -T $< -o $@ $(filter-out $<,$^)
 	$(OBJDUMP) -aldS $@ > ram/$(basename $(basename $@)).s
 
 linker.bootrom.ld: utility/linker.ld.S $(HEADERS)
-	$(CC) -E -P -DBOOT_FROM_BOOTROM $(LINKDER_DEFS_BOOTROM) $(CFLAGS) $< -o $@
+	$(CC) -E -P -DCODE_INTO_BOOTROM $(LINKDER_DEFS) $(CFLAGS) $< -o $@
 
 linker.ram.ld: utility/linker.ld.S $(HEADERS)
-	$(CC) -E -P $(LINKDER_DEFS_MEM) $(CFLAGS) $< -o $@
+	$(CC) -E -P $(LINKDER_DEFS) $(CFLAGS) $< -o $@
 
 %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<

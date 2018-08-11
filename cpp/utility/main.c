@@ -16,7 +16,7 @@ void _main() {
     }
 }
 
-unsigned int get_epc() {
+unsigned int _get_epc() {
     unsigned int n;
     asm(
         "mfc0 %0, $14\n\t"
@@ -25,7 +25,7 @@ unsigned int get_epc() {
     return n;
 }
 
-unsigned int get_cause() {
+unsigned int _get_cause() {
     unsigned int n;
     asm(
         "mfc0 %0, $13\n\t"
@@ -34,7 +34,7 @@ unsigned int get_cause() {
     return n;
 }
 
-void exception_handler() {
-    printf("An exception occurred, with epc %x and cause %x.\n", get_epc(), get_cause());
+void _exception_handler() {
+    printf("An exception occurred, with epc %x and cause %x.\n", _get_epc(), _get_cause());
     return;
 }
