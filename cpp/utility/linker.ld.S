@@ -23,8 +23,6 @@ SECTIONS
     {
         _text = .;
         *(.text.startup)
-        // . = ORIGIN(TEXT_AREA) + 0x0180;
-        *(.text.exception)
         *(.text*)
         *(.rodata*)
         *(.reginfo)
