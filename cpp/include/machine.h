@@ -35,7 +35,7 @@ typedef uint64_t    dword_t;
 #define UART_DATA_READY         2
 #define UART_CLEAR_TO_SEND      1
 
-void panic();
+#define panic()                 asm volatile("teq $zero, $zero")
 
 byte_t read_byte(void* addr);
 
@@ -57,6 +57,8 @@ void write_dword(void* addr, dword_t data);
 byte_t read_serial();
 
 void write_serial(byte_t data);
+
+word_t read_serial_word();
 
 void write_led(hword_t data);
 

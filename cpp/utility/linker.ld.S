@@ -2,7 +2,7 @@ ENTRY(_start);
 
 MEMORY
 {
-    BOOTROM  (rx)  : ORIGIN = 0xBFC00000, LENGTH = 4K
+    BOOTROM  (rx)  : ORIGIN = 0xBFC00000, LENGTH = 8K
     RAM_BASE (rwx) : ORIGIN = 0x80000000, LENGTH = 7M
     RAM_HIGH (rwx) : ORIGIN = 0x80700000, LENGTH = 1M
 }
@@ -18,6 +18,8 @@ MEMORY
 SECTIONS
 {
     . = ORIGIN(TEXT_AREA);
+
+    _mem_start = ORIGIN(DATA_AREA);
 
     .text :
     {

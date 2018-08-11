@@ -7,8 +7,9 @@
 extern "C" {
 #endif
 
-int puts(char *s);
-int printf (char *fmt, ...);
+int puts(const char *s);
+int putstring(const char *s); // no newline
+int printf (const char *fmt, ...);
 int sprintf (char *buf, const char *fmt, ...);
 
 struct FILE{

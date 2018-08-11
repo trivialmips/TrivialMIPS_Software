@@ -28,10 +28,6 @@ void write(void *addr, T data){
 RUN_FOR_ALL_TYPE(GENERATE_READ_FUNC)
 RUN_FOR_ALL_TYPE(GENERATE_WRITE_FUNC)
 
-void panic(){
-	asm volatile("teq $zero, $zero");
-}
-
 byte_t read_serial(){
 	while (!(read<byte_t>(UART_STATUS_ADDR) & UART_DATA_READY));
 	return read<byte_t>(UART_DATA_ADDR);
@@ -40,6 +36,15 @@ byte_t read_serial(){
 void write_serial(byte_t data){
 	while (!(read<byte_t>(UART_STATUS_ADDR) & UART_CLEAR_TO_SEND));
 	write<byte_t>(UART_DATA_ADDR, data);
+}
+
+word_t read_serial_word(){
+	word_t word = 0;
+	word |= read_serial();
+	word |= read_serial() << 8;
+	word |= read_serial() << 16;
+	word |= read_serial() << 24;
+	return word;
 }
 
 void write_led(hword_t data){

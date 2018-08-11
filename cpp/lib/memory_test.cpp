@@ -18,7 +18,7 @@ bool do_test_memory() {
 	rand_seed = 23;
 	for(int i = 0; i != 8 * 1024 * 1024 / sizeof(Type); ++i){
 		if(mem[i] != static_cast<Type>(rand(rand_seed))) {
-			printf("Error at %x \n\n", MEM_START_ADDR + i * sizeof(Type));
+			printf("Error at %x \n\n", mem + i * sizeof(Type));
 			return false;
 		}
     }

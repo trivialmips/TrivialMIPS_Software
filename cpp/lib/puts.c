@@ -1,4 +1,4 @@
-int putstring(char *s)
+int putstring(const char *s)
 {
     char c;
     while ((c = *s))
@@ -11,7 +11,7 @@ int putstring(char *s)
     return 0;
 }
 
-int puts(char *s)
+int puts(const char *s)
 {
     putstring(s);
     putchar('\r');
