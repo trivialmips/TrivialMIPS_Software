@@ -2,6 +2,7 @@
 #define __MACHINE_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,10 +66,10 @@ void write_led(hword_t data);
 #ifdef __cplusplus
 void write_segment(hword_t data, bool decode = true);
 #else
-void write_segment(hword_t data, _Bool decode);
+void write_segment(hword_t data, bool decode);
 #endif
 
-hword_t read_switches();
+word_t read_switches();
 
 #ifdef __cplusplus
 }

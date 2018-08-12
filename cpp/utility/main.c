@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <machine.h>
+#include <exception.h>
 
 extern byte_t *_bss, *_bss_end;
 
@@ -36,5 +37,6 @@ word_t _get_cause() {
 }
 
 void _exception_handler() {
-    printf("An exception occurred, with epc %x and cause %x.\n", _get_epc(), _get_cause());
+    word_t code = (_get_cause() >> 2) & 0xF;
+    printf("An exception occurred, with epc %x and cause %d (%s).\n", _get_epc(), code, EXCEPTION_MESSAGES[code]);
 }

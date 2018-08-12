@@ -37,7 +37,7 @@ SOFTWARE.
 
 /* e_machine definitions */
 #define EM_386		    3	// Intel x86 
-#define EM_MIPS_RS3_LE  10  // MIPS R3000 little-endian
+#define EM_MIPS  		8   // MIPS
 
 typedef struct {
 	uint32_t 	e_ident[4];     /* Magic number and other info */

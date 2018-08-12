@@ -20,6 +20,7 @@ SECTIONS
     . = ORIGIN(TEXT_AREA);
 
     _mem_start = ORIGIN(DATA_AREA);
+    _mem_end = ORIGIN(DATA_AREA) + LENGTH(DATA_AREA);
 
     .text :
     {

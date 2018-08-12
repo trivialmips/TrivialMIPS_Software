@@ -59,6 +59,6 @@ void write_segment(hword_t data, bool decode){
 	}
 }
 
-hword_t read_switches(){
-	return read<hword_t>(SWITCHES_ADDR);
+word_t read_switches(){
+	return read<word_t>(SWITCHES_ADDR);
 }
