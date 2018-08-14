@@ -3,13 +3,13 @@
 #include <machine.h>
 #include <exception.h>
 
-extern byte_t *_bss, *_bss_end;
+extern byte_t _bss, _bss_end;
 
 void _main() {
     // clear bss section
-    memset(_bss, 0, (_bss_end - _bss));
+    memset(&_bss, 0, (&_bss_end - &_bss));
     // call the actual function
-    puts("Hello TrivialMIPS!");
+    puts("=====Hello TrivialMIPS!=====");
     int result = _entry();
     if (result == 0) {
         puts("Program exited normally.");

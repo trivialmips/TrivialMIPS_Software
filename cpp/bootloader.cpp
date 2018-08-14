@@ -11,23 +11,24 @@ const hword_t DEVICE_UART = 0x4;   // switch 3
 const hword_t BOOT_MODE = 0x8;     // switch 4
 const hword_t CHECK_SRAM = 0x8000; // switch 16
 
-extern void *_mem_start, *_mem_end;
+extern byte_t _mem_start, _mem_end;
 
 void boot_addr(void *addr) {
     printf("Booting from address %p...\n", addr);
     asm volatile("jr %0;" ::"r"(addr));
 }
 
-// FIXME: not working
+
 void check_overlap(void *addr, uint32_t length) {
     auto start_addr = reinterpret_cast<byte_t* const>(addr);
     auto end_addr = start_addr + length;
-    if ((start_addr >= _mem_start && start_addr < _mem_end) ||
-        (end_addr >= _mem_start && end_addr < _mem_end)) {
+    if ((start_addr >= &_mem_start && start_addr < &_mem_end) ||
+        (end_addr >= &_mem_start && end_addr < &_mem_end)) {
         puts("ERROR: Program and bootloader memory overlap.");
         panic();
     }
 }
+
 
 void wait_for_magic() {
     uint32_t count = 0;
@@ -38,6 +39,7 @@ void wait_for_magic() {
             count = 0;
     }
 }
+
 
 void *copy_from_flash(void *addr) {
     auto *ehdr = reinterpret_cast<elf32_ehdr *>(addr);
@@ -74,6 +76,7 @@ void *copy_from_flash(void *addr) {
     return reinterpret_cast<void *>(ehdr->e_entry - off);
 }
 
+
 void *load_from_uart() {
     putstring("Send uint32 sequence: 0x23232323 OFFSET LENGTH");
     puts(" ENTRY DATA...");
@@ -98,9 +101,12 @@ void *load_from_uart() {
     return entry;
 }
 
+
 int _entry() {
 
     puts("Starting stage 1 bootloader...");
+
+    printf("Bootloader used memory: from %x to %x\n", &_mem_start, &_mem_end);
 
     auto switches = get_switches();
     switches = get_switches(); // workaround for GPIO controller
@@ -132,6 +138,9 @@ int _entry() {
             puts("RAM");
             // do nothing
             boot_addr(MEM_START_ADDR);
+        } else {
+            puts("Not Selected");
+            panic();
         }
     } else { // dump mode
         puts("Dump mode.");
