@@ -12,6 +12,7 @@ const hword_t BOOT_MODE = 0x8;     // switch 4
 const hword_t CHECK_SRAM = 0x8000; // switch 16
 
 extern byte_t _mem_start, _mem_end;
+extern byte_t _mem_check_start, _mem_check_end;
 
 void boot_addr(void *addr) {
     printf("Booting from address %p...\n", addr);
@@ -113,8 +114,7 @@ int _entry() {
 
     printf("Switch status is %x.\n", switches);
     if (switches & CHECK_SRAM) {
-        puts("Starting memory test...");
-        if (!test_memory()) {
+        if (!test_memory(&_mem_check_start, &_mem_check_end)) {
             puts("Memory test failed. Abort.");
             panic();
         } else {

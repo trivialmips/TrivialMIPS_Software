@@ -5,6 +5,6 @@
 
 word_t rand(word_t &rand_seed);
 
-bool test_memory();
+bool test_memory(void* start, void* end);
 
 #endif

@@ -22,6 +22,14 @@ SECTIONS
     _mem_start = ORIGIN(DATA_AREA);
     _mem_end = ORIGIN(DATA_AREA) + LENGTH(DATA_AREA);
 
+#ifdef CODE_INTO_BOOTROM
+    _mem_check_start = ORIGIN(RAM_BASE);
+    _mem_check_end = ORIGIN(RAM_BASE) + LENGTH(RAM_BASE);
+#else
+    _mem_check_start = _stack;
+    _mem_check_end = ORIGIN(RAM_HIGH) + LENGTH(RAM_HIGH);
+#endif
+
     .text :
     {
         _text = .;
