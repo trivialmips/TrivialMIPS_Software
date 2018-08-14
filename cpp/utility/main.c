@@ -38,5 +38,7 @@ word_t _get_cause() {
 
 void _exception_handler() {
     word_t code = (_get_cause() >> 2) & 0xF;
-    printf("An exception occurred, with epc %x and cause %d (%s).\n", _get_epc(), code, EXCEPTION_MESSAGES[code]);
+    auto epc = _get_epc();
+    printf("An exception occurred, with epc %x and cause %d (%s).\n", epc, code, EXCEPTION_MESSAGES[code]);
+    write_led((uint16_t) epc);
 }
