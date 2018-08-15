@@ -2,10 +2,14 @@
 	.section	.text.startup
 _start:
 .org 0x0
+
+#ifndef CODE_INTO_BOOTROM
 	# setup exception handler
 	# la		$t1, _text
 	mtc0	$zero, $15, 1 # set c0_ebase to 0
 	mtc0	$zero, $12 # use ebase and disable interrupts
+#endif
+
 	# setup stack pointer
 	la 		$sp, _stack
 	la		$gp, _gp
@@ -39,7 +43,13 @@ _switch_led_status:
 	nop
 
 _exception:
+
+#ifdef CODE_INTO_BOOTROM
+.org 0x380
+#else
 .org 0x180
+#endif
+
     jal _exception_handler
     nop
     j _loop

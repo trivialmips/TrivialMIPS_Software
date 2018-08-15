@@ -51,12 +51,12 @@ split_bin: ../utility/split_bin.cpp
 %.ram.bin: %.ram.elf
 	$(OBJCOPY) -O binary -j .text -j .data $< $@
 
-%.bootrom.elf: linker.bootrom.ld %.o startup.o main.o lib/libtinyc.a
+%.bootrom.elf: linker.bootrom.ld %.o startup.bootrom.o main.o lib/libtinyc.a
 	mkdir -p bootrom
 	$(LD) $(LDFLAGS) -T $< -o $@ $(filter-out $<,$^)
 	$(OBJDUMP) -aldS $@ > bootrom/$(basename $(basename $@)).s
 
-%.ram.elf: linker.ram.ld %.o startup.o main.o lib/libtinyc.a
+%.ram.elf: linker.ram.ld %.o startup.ram.o main.o lib/libtinyc.a
 	mkdir -p ram
 	$(LD) $(LDFLAGS) -T $< -o $@ $(filter-out $<,$^)
 	$(OBJDUMP) -aldS $@ > ram/$(basename $(basename $@)).s
@@ -73,8 +73,11 @@ linker.ram.ld: utility/linker.ld.S $(HEADERS)
 main.o: utility/main.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-startup.o: utility/startup.s
+startup.ram.o: utility/startup.S
 	$(CC) $(CFLAGS) -c -o $@ $<
+
+startup.bootrom.o: utility/startup.S
+	$(CC) $(CFLAGS) -DCODE_INTO_BOOTROM -c -o $@ $<
 
 lib/libtinyc.a:
 	make -C lib libtinyc.a
