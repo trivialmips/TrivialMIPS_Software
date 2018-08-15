@@ -15,7 +15,7 @@ extern byte_t _mem_start, _mem_end;
 extern byte_t _mem_check_start, _mem_check_end;
 
 void boot_addr(void *addr) {
-    printf("Booting from address %p...\n", addr);
+    printf("Booting from address 0x%p...\n", addr);
     asm volatile("jr %0;" ::"r"(addr));
 }
 
@@ -46,7 +46,7 @@ void *copy_from_flash(void *addr) {
     auto *ehdr = reinterpret_cast<elf32_ehdr *>(addr);
 
     if (ehdr->e_ident[0] != ELF_MAGIC) {
-        printf("ERROR: No valid ELF magic found in address %p.\n",
+        printf("ERROR: No valid ELF magic found in address 0x%p.\n",
                ehdr->e_ident);
         panic();
     }
@@ -64,7 +64,7 @@ void *copy_from_flash(void *addr) {
     auto off = (phdr->p_vaddr - phdr->p_paddr);
 
     while (phdr < last_phdr) {
-        printf("Copying %d bytes from offset %x to address 0x%p\n",
+        printf("Copying %d bytes from offset 0x%x to address 0x%p\n",
                phdr->p_filesz, phdr->p_offset, phdr->p_paddr);
         auto *dest = reinterpret_cast<byte_t *>(phdr->p_paddr);
         auto *source =
@@ -88,7 +88,7 @@ void *load_from_uart() {
     word_t length = read_serial_word();
     auto *entry = reinterpret_cast<byte_t *>(read_serial_word());
 
-    printf("Offset: %p, length: %d bytes, entry: %p. Start receiving data...\n",
+    printf("Offset: 0x%p, length: %d bytes, entry: 0x%p. Start receiving data...\n",
            offset, length, entry);
 
     check_overlap((void*)offset, length);
@@ -107,7 +107,7 @@ int _entry() {
 
     puts("Starting stage 1 bootloader...");
 
-    printf("Bootloader used memory: from %x to %x\n", &_mem_start, &_mem_end);
+    printf("Bootloader used memory: from 0x%x to 0x%x\n", &_mem_start, &_mem_end);
 
     auto switches = get_switches();
     switches = get_switches(); // workaround for GPIO controller
@@ -151,7 +151,7 @@ int _entry() {
                 reinterpret_cast<volatile byte_t *>(read_serial_word());
             word_t length = read_serial_word();
 
-            printf("Offset: %p, length: %d bytes. Start sending data...",
+            printf("Offset: 0x%p, length: %d bytes. Start sending data...",
                    offset, length);
 
             for (size_t i = 0; i < length; ++i) {

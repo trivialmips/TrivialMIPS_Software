@@ -1,6 +1,7 @@
 #ifndef __EXCEPTION_H__
 #define __EXCEPTION_H__
 
+__attribute__((section(".rodata")))
 const char* EXCEPTION_MESSAGES[32] = {
     "Interrupt",
     "TLB modification exception",

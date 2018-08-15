@@ -6,10 +6,17 @@
 extern byte_t _bss, _bss_end;
 
 void _main() {
-    // clear bss section
-    memset(&_bss, 0, (&_bss_end - &_bss));
-    // call the actual function
+
     puts("=====Hello TrivialMIPS!=====");
+
+    // clear bss section if needed
+    auto bss_size = (uint32_t) &_bss_end - (uint32_t) &_bss;
+    if (bss_size > 0) {
+        printf("Filling .bss section with 0, offset: 0x%x, size: %d bytes.\n", &_bss, bss_size);
+        memset(&_bss, 0, bss_size);
+    }
+
+    // call the actual function
     int result = _entry();
     if (result == 0) {
         puts("Program exited normally.");
@@ -39,6 +46,6 @@ word_t _get_cause() {
 void _exception_handler() {
     word_t code = (_get_cause() >> 2) & 0xF;
     auto epc = _get_epc();
-    printf("An exception occurred, with epc %x and cause %d (%s).\n", epc, code, EXCEPTION_MESSAGES[code]);
+    printf("An exception occurred, with epc 0x%x and cause %d (%s).\n", epc, code, EXCEPTION_MESSAGES[code]);
     write_led((uint16_t) epc);
 }
