@@ -7,7 +7,7 @@ extern byte_t _bss, _bss_end;
 
 void _main() {
 
-    puts("=====Hello TrivialMIPS!=====");
+    puts("*****TrivialMIPS Bare Metal System*****");
 
     // clear bss section if needed
     auto bss_size = (uint32_t) &_bss_end - (uint32_t) &_bss;

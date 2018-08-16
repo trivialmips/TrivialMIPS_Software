@@ -16,6 +16,7 @@ extern byte_t _mem_check_start, _mem_check_end;
 
 void boot_addr(void *addr) {
     printf("Booting from address 0x%p...\n", addr);
+    puts("=====Exiting TrivialBootloader=====");
     asm volatile("jr %0;" ::"r"(addr));
 }
 
@@ -56,6 +57,8 @@ void *copy_from_flash(void *addr) {
                ehdr->e_machine);
         panic();
     }
+
+    puts("Valid ELF file found, will now copy to RAM.");
 
     auto *phdr = reinterpret_cast<elf32_phdr *>((uint32_t)addr + ehdr->e_phoff);
     auto *last_phdr = reinterpret_cast<elf32_phdr *>(
@@ -105,14 +108,12 @@ void *load_from_uart() {
 
 int _entry() {
 
-    puts("Starting stage 1 bootloader...");
+    puts("=====Entering TrivialBootloader=====");
 
     printf("Bootloader used memory: from 0x%x to 0x%x\n", &_mem_start, &_mem_end);
 
     auto switches = get_switches();
-    switches = get_switches(); // workaround for GPIO controller
 
-    printf("Switch status is %x.\n", switches);
     if (switches & CHECK_SRAM) {
         if (!test_memory(&_mem_check_start, &_mem_check_end)) {
             puts("Memory test failed. Abort.");
@@ -122,8 +123,12 @@ int _entry() {
         }
     }
 
+    switches = get_switches();
+
+    putstring("Mode: ");
+
     if (!(switches & BOOT_MODE)) { // boot mode
-        putstring("Boot mode. Device: ");
+        putstring("Boot\nDevice: ");
         if (switches & DEVICE_FLASH) {
             puts("SPI Flash");
             // copy executable segment from flash to ram
@@ -143,7 +148,7 @@ int _entry() {
             panic();
         }
     } else { // dump mode
-        puts("Dump mode.");
+        puts("Dump");
         while (true) {
             puts("Send uint32 sequence: 0x23232323 OFFSET LENGTH");
             wait_for_magic();
