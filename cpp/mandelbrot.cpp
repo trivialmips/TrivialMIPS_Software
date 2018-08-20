@@ -9,12 +9,11 @@ int _entry()
     float zoom = 1, moveX = -0.5, moveY = 0; //you can change these to zoom and change position
     int maxIterations = 255; //after how much iterations the function should stop
 
-	unsigned *gmem = reinterpret_cast<unsigned *>(GRAPHICS_ADDR);
+	char *gmem = reinterpret_cast<char *>(GRAPHICS_ADDR);
 
 	//loop through every pixel
 	for(y = 0; y < h; y++)
 	{
-		unsigned tmp = 0;
 		for(x = 0; x < w; x++) 
 		{
 			// calculate the initial real and imaginary part of z, based on the pixel location and zoom and position values
@@ -38,15 +37,7 @@ int _entry()
 
 			int color = i * 255 / maxIterations;
 
-			unsigned pos = (w * y + x);
-			unsigned offset = 4 * (pos & 7);
-			unsigned hw = (color > 128) ? 0 : 0xf;
-			unsigned nowColor = tmp;
-			tmp = (hw << offset) | (nowColor & ~(0xf << offset));
-			if((pos & 7) == 7) {
-				gmem[pos / 8] = tmp;
-				tmp = 0;
-			}
+			gmem[w * y + x] = (color << 5) | (color << 2) | (color >> 1);
 		}
 	}
 
