@@ -8,6 +8,7 @@
 #define GPIO_ADDR 0xa6000000
 #define TIMER_ADDR 0xa4000000
 #define MEM_ADDR 0x80000000
+#define GRAPHICS_ADDR 0xa2000000
 #define LOAD_ENTRY(var, addr) \
 	volatile unsigned *const var = reinterpret_cast<volatile unsigned *const>(addr)
 #define LOAD_SERIAL_ENTRY(var) LOAD_ENTRY(var, SERIAL_ADDR)

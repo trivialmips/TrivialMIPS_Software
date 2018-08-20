@@ -2,18 +2,19 @@
 
 int _entry()
 {
-    int w = 600, h = 400, x, y; 
+    int w = 800, h = 600, x, y; 
     //each iteration, it calculates: newz = oldz*oldz + p, where p is the current pixel, and oldz stars at the origin
     float pr, pi;                   //real and imaginary part of the pixel p
     float newRe, newIm, oldRe, oldIm;   //real and imaginary parts of new and old z
     float zoom = 1, moveX = -0.5, moveY = 0; //you can change these to zoom and change position
     int maxIterations = 255; //after how much iterations the function should stop
 
-	send_serial_str("P3\n600 400\n255\n");
+	unsigned *gmem = reinterpret_cast<unsigned *>(GRAPHICS_ADDR);
 
 	//loop through every pixel
 	for(y = 0; y < h; y++)
 	{
+		unsigned tmp = 0;
 		for(x = 0; x < w; x++) 
 		{
 			// calculate the initial real and imaginary part of z, based on the pixel location and zoom and position values
@@ -36,14 +37,17 @@ int _entry()
 			}
 
 			int color = i * 255 / maxIterations;
-			send_serial_integer(color);
-			send_serial_char(' ');
-			send_serial_integer(color);
-			send_serial_char(' ');
-			send_serial_integer(color);
-			send_serial_char(' ');
+
+			unsigned pos = (w * y + x);
+			unsigned offset = 4 * (pos & 7);
+			unsigned hw = (color > 128) ? 0 : 0xf;
+			unsigned nowColor = tmp;
+			tmp = (hw << offset) | (nowColor & ~(0xf << offset));
+			if((pos & 7) == 7) {
+				gmem[pos / 8] = tmp;
+				tmp = 0;
+			}
 		}
-		send_serial_char('\n');
 	}
 
 	return 0;

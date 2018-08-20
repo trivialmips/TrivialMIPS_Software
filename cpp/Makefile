@@ -16,7 +16,7 @@ BASES=$(SRCS:.cpp=.base.bin)
 EXTS=$(SRCS:.cpp=.ext.bin)
 EXTS=$(SRCS:.cpp=.s)
 
-COMP_FLGAS=-nostdinc -nostdlib -ffunction-sections -fdata-sections -ffreestanding -Wall -mxgot -fno-builtin -fno-PIC -fno-PIE -mno-abicalls -g -EL -mhard-float -mips32 -Os -I include -include common.h -include bootstrap.h
+COMP_FLGAS=-msingle-float -nostdinc -nostdlib -ffunction-sections -fdata-sections -ffreestanding -Wall -mxgot -fno-builtin -fno-PIC -fno-PIE -mno-abicalls -g -EL -mhard-float -mips32 -Os -I include -include common.h -include bootstrap.h
 CXXFLAGS=$(COMP_FLGAS) -std=c++11
 CFLAGS=$(COMP_FLGAS) -Wno-implicit-function-declaration
 
