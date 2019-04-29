@@ -23,11 +23,11 @@ SECTIONS
     _mem_end = ORIGIN(DATA_AREA) + LENGTH(DATA_AREA);
 
 #ifdef CODE_INTO_BOOTROM
-    _mem_check_start = ORIGIN(RAM_BASE);
-    _mem_check_end = ORIGIN(RAM_BASE) + LENGTH(RAM_BASE);
+    _mem_avail_start = ORIGIN(RAM_BASE);
+    _mem_avail_end = ORIGIN(RAM_BASE) + LENGTH(RAM_BASE);
 #else
-    _mem_check_start = _stack;
-    _mem_check_end = ORIGIN(RAM_HIGH) + LENGTH(RAM_HIGH);
+    _mem_avail_start = _stack;
+    _mem_avail_end = ORIGIN(RAM_HIGH) + LENGTH(RAM_HIGH);
 #endif
 
     .text :

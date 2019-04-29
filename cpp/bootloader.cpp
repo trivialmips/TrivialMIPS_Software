@@ -5,14 +5,15 @@
 #include <string.h>
 #include <trivial_mips.h>
 
-const hword_t DEVICE_FLASH = 0x1;  // switch 1
-const hword_t DEVICE_RAM = 0x2;    // switch 2
-const hword_t DEVICE_UART = 0x4;   // switch 3
-const hword_t BOOT_MODE = 0x8;     // switch 4
-const hword_t CHECK_SRAM = 0x8000; // switch 16
+const hword_t DEVICE_FLASH = 1 << 0;  // switch 1
+const hword_t DEVICE_RAM = 1 << 1;    // switch 2
+const hword_t DEVICE_UART = 1 << 3;   // switch 3
+const hword_t BOOT_MODE = 1 << 4;     // switch 4
+const hword_t BZERO_MEM = 1 << 14;    // switch 15
+const hword_t CHECK_SRAM = 1 << 15;   // switch 16
 
 extern byte_t _mem_start, _mem_end;
-extern byte_t _mem_check_start, _mem_check_end;
+extern byte_t _mem_avail_start, _mem_avail_end;
 
 void boot_addr(void *addr) {
     printf("Booting from address 0x%p...\n", addr);
@@ -111,16 +112,26 @@ int _entry() {
     puts("=====Entering TrivialBootloader=====");
 
     printf("Bootloader used memory: from 0x%x to 0x%x\n", &_mem_start, &_mem_end);
+    printf("Available memory: from 0x%x to 0x%x\n", &_mem_avail_start, &_mem_avail_end);
 
+    // workaround for bug in GPIO controller
+    get_switches();
     auto switches = get_switches();
 
     if (switches & CHECK_SRAM) {
-        if (!test_memory(&_mem_check_start, &_mem_check_end)) {
+        if (!test_memory(&_mem_avail_start, &_mem_avail_end)) {
             puts("Memory test failed. Abort.");
             panic();
         } else {
             puts("Memory test succeeded.");
         }
+    }
+
+    if (switches & BZERO_MEM) {
+	for (auto start = (volatile uint32_t*)&_mem_avail_start; start < (uint32_t*)&_mem_avail_end; ++start) {
+            *start = 0;
+	}
+	puts("Available memory filled with zero.");
     }
 
     switches = get_switches();
