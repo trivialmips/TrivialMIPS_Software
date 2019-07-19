@@ -28,14 +28,29 @@ void write(void *addr, T data){
 RUN_FOR_ALL_TYPE(GENERATE_READ_FUNC)
 RUN_FOR_ALL_TYPE(GENERATE_WRITE_FUNC)
 
+void init_serial() {
+	// Turn off the FIFO
+	write_byte(UART_FCR_ADDR, 0);
+	// Set speed; requires DLAB latch
+	write_byte(UART_LCR_ADDR, 0x80);
+	write_byte(UART_DLL_ADDR, (byte_t) (115200 / 9600));
+	write_byte(UART_DLM_ADDR, 0);
+	// 8 data bits, 1 stop bit, parity off; turn off DLAB latch
+	write_byte(UART_LCR_ADDR, ~0x80 & 0x03);
+	// No modem controls
+	write_byte(UART_MCR_ADDR, 0);
+	// No interrupts
+	write_byte(UART_IER_ADDR, 0);
+}
+
 byte_t read_serial(){
-	while (!(read<byte_t>(UART_STATUS_ADDR) & UART_DATA_READY));
-	return read<byte_t>(UART_DATA_ADDR);
+	while (!(read_byte(UART_LSR_ADDR) & 0x01));
+	return read_byte(UART_DAT_ADDR);
 }
 
 void write_serial(byte_t data){
-	while (!(read<byte_t>(UART_STATUS_ADDR) & UART_CLEAR_TO_SEND));
-	write<byte_t>(UART_DATA_ADDR, data);
+	while (!(read_byte(UART_LSR_ADDR) & 0x40));
+	write_byte(UART_DAT_ADDR, data);
 }
 
 word_t read_serial_word(){
@@ -48,17 +63,13 @@ word_t read_serial_word(){
 }
 
 void write_led(hword_t data){
-	write<hword_t>(LED_ADDR, data);
+	write_hword(LED_ADDR, data);
 }
 
-void write_segment(hword_t data, bool decode){
-	if (decode) {
-		write<byte_t>(NUM_ADDR, (byte_t) data);
-	} else {
-		write<word_t>(NUM_ADDR, 0x80000000 | data);
-	}
+void write_segment(word_t data){
+	write_word(NUM_ADDR, data);
 }
 
 word_t read_switches(){
-	return read<word_t>(SWITCHES_ADDR);
+	return read_word(SWITCHES_ADDR);
 }

@@ -2,17 +2,17 @@ ENTRY(_start);
 
 MEMORY
 {
-    BOOTROM  (rx)  : ORIGIN = 0xBFC00000, LENGTH = 16K
-    RAM_BASE (rwx) : ORIGIN = 0x80000000, LENGTH = 7M
-    RAM_HIGH (rwx) : ORIGIN = 0x80700000, LENGTH = 1M
+    BOOTROM  (rx)  : ORIGIN = 0xBFC00000, LENGTH = 128K
+    OCM      (rwx) : ORIGIN = 0x88000000, LENGTH = 64K
+    RAM      (rwx) : ORIGIN = 0x80000000, LENGTH = 128M
 }
 
 #ifdef CODE_INTO_BOOTROM
 #define TEXT_AREA BOOTROM
-#define DATA_AREA RAM_HIGH
+#define DATA_AREA OCM
 #else
-#define TEXT_AREA RAM_BASE
-#define DATA_AREA RAM_BASE
+#define TEXT_AREA OCM
+#define DATA_AREA RAM
 #endif
 
 SECTIONS
@@ -23,11 +23,11 @@ SECTIONS
     _mem_end = ORIGIN(DATA_AREA) + LENGTH(DATA_AREA);
 
 #ifdef CODE_INTO_BOOTROM
-    _mem_avail_start = ORIGIN(RAM_BASE);
-    _mem_avail_end = ORIGIN(RAM_BASE) + LENGTH(RAM_BASE);
+    _mem_avail_start = ORIGIN(RAM);
+    _mem_avail_end = ORIGIN(RAM) + LENGTH(RAM);
 #else
     _mem_avail_start = _stack;
-    _mem_avail_end = ORIGIN(RAM_HIGH) + LENGTH(RAM_HIGH);
+    _mem_avail_end = ORIGIN(RAM) + LENGTH(RAM);
 #endif
 
     .text :

@@ -17,21 +17,28 @@ typedef uint64_t    dword_t;
 
 #define ADDR(addr)              ((void*)addr)
 
-#define SWITCHES_ADDR           ADDR(0xA6000000)
-#define LED_ADDR                ADDR(0xA6000008)
-#define NUM_ADDR                ADDR(0xA6000004)
-#define UART_STATUS_ADDR		ADDR(0xA3000000)
-#define UART_DATA_ADDR			ADDR(0xA3000004)
+#define SWITCHES_ADDR           ADDR(0xBFD0F020)
+#define LED_ADDR                ADDR(0xBFD0F000)
+#define NUM_ADDR                ADDR(0xBFD0F010)
+
+#define UART_DAT_ADDR           ADDR(0xBFD03000)
+#define UART_FCR_ADDR           ADDR(0xBFD03008)
+#define UART_LCR_ADDR           ADDR(0xBFD0300C)
+#define UART_LSR_ADDR           ADDR(0xBFD03014)
+#define UART_DLL_ADDR           ADDR(0xBFD03000)
+#define UART_DLM_ADDR           ADDR(0xBFD03004)
+#define UART_MCR_ADDR           ADDR(0xBFD03010)
+#define UART_IER_ADDR           ADDR(0xBFD03004)
 
 #define MEM_START_ADDR          ADDR(0x80000000)
-#define MEM_END_ADDR            ADDR(0x80800000)
-#define FLASH_START_ADDR        ADDR(0xA1000000)
-#define FLASH_END_ADDR          ADDR(0xA1800000)
-#define GRAPHICS_MEM_START_ADDR ADDR(0xA2000000)
-#define GRAPHICS_MEM_END_ADDR   ADDR(0xA203A980)
+#define MEM_END_ADDR            ADDR(0x807FFFFF)
+#define FLASH_START_ADDR        ADDR(0xBA000000)
+#define FLASH_END_ADDR          ADDR(0xBAFFFFFF)
+// #define GRAPHICS_MEM_START_ADDR ADDR(0xA2000000)
+// #define GRAPHICS_MEM_END_ADDR   ADDR(0xA203A980)
 
-#define TIMER_CYCLE_ADDR		ADDR(0xA4000004)
-#define TIMER_MICROSEC_ADDR		ADDR(0xA4000000)
+#define TIMER_CYCLE_ADDR		ADDR(0xBFD0E000)
+#define TIMER_MICROSEC_ADDR		ADDR(0xBFD0E000)
 
 #define UART_DATA_READY         2
 #define UART_CLEAR_TO_SEND      1
@@ -54,6 +61,7 @@ void write_word(void* addr, word_t data);
 
 void write_dword(void* addr, dword_t data);
 
+void init_serial();
 
 byte_t read_serial();
 
@@ -63,11 +71,7 @@ word_t read_serial_word();
 
 void write_led(hword_t data);
 
-#ifdef __cplusplus
-void write_segment(hword_t data, bool decode = true);
-#else
-void write_segment(hword_t data, bool decode);
-#endif
+void write_segment(word_t data);
 
 word_t read_switches();
 

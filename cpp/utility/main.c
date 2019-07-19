@@ -7,6 +7,8 @@ extern byte_t _bss, _bss_end;
 
 void _main() {
 
+    init_serial();
+
     puts("*****TrivialMIPS Bare Metal System*****");
 
     // clear bss section if needed
