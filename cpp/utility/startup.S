@@ -18,14 +18,14 @@ _start:
 	nop
 
 _loop:
-    lui     $t4, 0x8000
 	lui     $t3, 0x0000
 _loop_body:
-	lui		$s1, 0xa400       # $s1 = 0xa4000000 (timer in us)
-	lw		$t1, 0($s1)       # read time
-	lui     $t2, 0x7          # $t2 = 0x7A120 (500000)
-	addiu   $t2, $t2, 0xA120
-	add     $t0, $t1, $t2     # $t0 = $t1 + 500000 us
+	lui		$s1, 0xbfd0       # $s1 = 0xbfd0e0000 (100 MHz Clock)
+	addiu   $s1, $s1, 0xe000
+	lw		$t1, 0($s1)       # $t1 = time
+	lui     $t2, 0x2fa        # $t2 = 0x02faf080 (50000000)
+	addiu   $t2, $t2, 0xf080
+	add     $t0, $t1, $t2     # $t0 = $t1 + 0.5s
 
 _wait:
     lw		$t1, 0($s1)
@@ -35,10 +35,10 @@ _wait:
 	nop
 
 _switch_led_status:
-	lui     $s2, 0xa600      # read 0xa6000008 (segment)
+	lui     $s2, 0xbfd0      # read 0xbfd0f010 (nums)
+	addiu   $s2, $s2, 0xf010
 	nor     $t3, $t3, $t3    # $t3 = ~$t3
-	or      $t3, $t3, $t4    # disable decoding
-	sw      $t3, 0x4($s2)
+	sw      $t3, 0($s2)
 	b       _loop_body
 	nop
 
