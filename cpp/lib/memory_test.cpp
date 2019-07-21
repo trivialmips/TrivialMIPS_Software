@@ -13,7 +13,6 @@ bool do_test_memory(void* _start, void* _end) {
 	auto *end = reinterpret_cast<volatile Type *>(_end);
 
 	auto size = (uint32_t) _end - (uint32_t) _start;
-	uint32_t progress;
 
 	auto *mem = start;
 
@@ -29,18 +28,17 @@ bool do_test_memory(void* _start, void* _end) {
 	rand_seed = 23;
 
 	while(mem < end) {
-		progress = (uint32_t) mem - (uint32_t) _start;
-		write_segment(progress * 100 / size);
-		write_led((uint16_t)((uint32_t) mem));
+		// print progress every 1MB
+		if ((uint32_t) mem % 0x100000 == 0) {
+			write_segment((uint32_t) mem);
+		}
 		if(*mem != static_cast<Type>(rand(rand_seed))) {
 			printf("Error at %x \n", mem);
+			write_segment((uint32_t) mem);
 			return false;
 		}
 		mem++;
 	}
-
-	write_led(0);
-	write_segment(100);
 
     return true;
 }

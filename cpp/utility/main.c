@@ -9,7 +9,11 @@ void _main() {
 
     init_serial();
 
+    write_segment(0x04);
+
     puts("*****TrivialMIPS Bare Metal System*****");
+
+    write_segment(0x05);
 
     // clear bss section if needed
     auto bss_size = (uint32_t) &_bss_end - (uint32_t) &_bss;
@@ -18,6 +22,8 @@ void _main() {
         memset(&_bss, 0, bss_size);
     }
 
+    write_segment(0x06);
+
     // call the actual function
     int result = _entry();
     if (result == 0) {
@@ -25,6 +31,9 @@ void _main() {
     } else {
         printf("Program exited abnormally with code %d.\n", result);
     }
+
+    write_segment(0x07);
+
 }
 
 word_t _get_epc() {

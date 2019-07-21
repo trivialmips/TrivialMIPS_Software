@@ -22,7 +22,7 @@ CFLAGS=$(COMP_FLGAS) -Wno-implicit-function-declaration
 
 LDFLAGS=-static -EL -nostdlib --nmagic --gc-sections
 
-LINKDER_DEFS=-DMEM_SIZE=0x00100000
+LINKDER_DEFS=
 
 export CC CXX AR CFLAGS CXXFLAGS
 
@@ -54,12 +54,12 @@ split_bin: ../utility/split_bin.cpp
 %.bootrom.elf: linker.bootrom.ld %.o startup.bootrom.o main.o lib/libtinyc.a
 	mkdir -p bootrom
 	$(LD) $(LDFLAGS) -T $< -o $@ $(filter-out $<,$^)
-	$(OBJDUMP) -aldS $@ > bootrom/$(basename $(basename $@)).s
+	$(OBJDUMP) -alDS $@ > bootrom/$(basename $(basename $@)).s
 
 %.ram.elf: linker.ram.ld %.o startup.ram.o main.o lib/libtinyc.a
 	mkdir -p ram
 	$(LD) $(LDFLAGS) -T $< -o $@ $(filter-out $<,$^)
-	$(OBJDUMP) -aldS $@ > ram/$(basename $(basename $@)).s
+	$(OBJDUMP) -alDS $@ > ram/$(basename $(basename $@)).s
 
 linker.bootrom.ld: utility/linker.ld.S $(HEADERS)
 	$(CC) -E -P -DCODE_INTO_BOOTROM $(LINKDER_DEFS) $(CFLAGS) $< -o $@

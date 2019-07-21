@@ -110,11 +110,15 @@ void *load_from_uart() {
 
 int _entry() {
 
+    write_segment(0x11000001);
+
     puts("=====Entering TrivialBootloader=====");
 
     printf("Bootloader used memory: from 0x%x to 0x%x\n", &_mem_start, &_mem_end);
 
-    auto switches = (byte_t ) get_switches();
+    write_segment(0x11000002);
+
+    auto switches = (byte_t) read_switches();
 
     if (switches & CHECK_SRAM) {
         if (!test_memory(&_mem_avail_start, &_mem_avail_end)) {
@@ -125,6 +129,8 @@ int _entry() {
         }
     }
 
+    write_segment(0x11000003);
+
     if (switches & BZERO_MEM) {
         for (auto start = (volatile uint32_t*)&_mem_avail_start; start < (uint32_t*)&_mem_avail_end; ++start) {
                 *start = 0;
@@ -132,7 +138,9 @@ int _entry() {
         puts("Available memory filled with zero.");
     }
 
-    switches = get_switches();
+    write_segment(0x11000004);
+
+    switches = read_switches();
 
     putstring("Mode: ");
 

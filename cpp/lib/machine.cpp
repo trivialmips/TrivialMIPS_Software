@@ -29,17 +29,18 @@ RUN_FOR_ALL_TYPE(GENERATE_READ_FUNC)
 RUN_FOR_ALL_TYPE(GENERATE_WRITE_FUNC)
 
 void init_serial() {
-	// Turn off the FIFO
-	write_byte(UART_FCR_ADDR, 0);
-	// Set speed; requires DLAB latch
+	// Enable 8 bytes receive FIFO
+	write_byte(UART_FCR_ADDR, 0x81);
+	// enable DLAB latch
 	write_byte(UART_LCR_ADDR, 0x80);
-	write_byte(UART_DLL_ADDR, (byte_t) (115200 / 9600));
-	write_byte(UART_DLM_ADDR, 0);
+	// set the speed to 115200
+	write_byte(UART_DLL_ADDR, 0x36);
+	write_byte(UART_DLM_ADDR, 0x0);
 	// 8 data bits, 1 stop bit, parity off; turn off DLAB latch
 	write_byte(UART_LCR_ADDR, ~0x80 & 0x03);
-	// No modem controls
+	// disable modem controls
 	write_byte(UART_MCR_ADDR, 0);
-	// No interrupts
+	// disable interrupts
 	write_byte(UART_IER_ADDR, 0);
 }
 

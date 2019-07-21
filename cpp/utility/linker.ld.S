@@ -47,11 +47,11 @@ SECTIONS
     .data :
     {
         _data = .;
-        _stack = _data + MEM_SIZE - 32;
+        _stack = _data + LENGTH(DATA_AREA) - 32;
         *(.data)
         *(.data*)
         *(.eh_frame)
-        _gp = ALIGN(16) + 0x7ff0;  
+        _gp = ALIGN(16);  
         *(.got.plt) *(.got)
         *(.sdata) 
         *(.lit8) 

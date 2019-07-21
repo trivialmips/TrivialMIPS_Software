@@ -17,9 +17,9 @@ typedef uint64_t    dword_t;
 
 #define ADDR(addr)              ((void*)addr)
 
-#define SWITCHES_ADDR           ADDR(0xBFD0F020)
-#define LED_ADDR                ADDR(0xBFD0F000)
-#define NUM_ADDR                ADDR(0xBFD0F010)
+#define SWITCHES_ADDR           ADDR(0xBFF0F020)
+#define LED_ADDR                ADDR(0xBFF0F000)
+#define NUM_ADDR                ADDR(0xBFF0F010)
 
 #define UART_DAT_ADDR           ADDR(0xBFD03000)
 #define UART_FCR_ADDR           ADDR(0xBFD03008)
@@ -37,8 +37,8 @@ typedef uint64_t    dword_t;
 // #define GRAPHICS_MEM_START_ADDR ADDR(0xA2000000)
 // #define GRAPHICS_MEM_END_ADDR   ADDR(0xA203A980)
 
-#define TIMER_CYCLE_ADDR		ADDR(0xBFD0E000)
-#define TIMER_MICROSEC_ADDR		ADDR(0xBFD0E000)
+#define TIMER_CYCLE_ADDR		ADDR(0xBFF0E000)
+#define TIMER_MICROSEC_ADDR		ADDR(0xBFF0E000)
 
 #define UART_DATA_READY         2
 #define UART_CLEAR_TO_SEND      1
