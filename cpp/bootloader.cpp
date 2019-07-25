@@ -111,6 +111,10 @@ void *load_from_uart() {
 int _entry() {
 
     write_segment(0x11000001);
+    puts("Waiting for 2 seconds...");
+
+    auto now = read_word(TIMER_CYCLE_ADDR);
+    while (read_word(TIMER_CYCLE_ADDR) - now < 200000000);
 
     puts("=====Entering TrivialBootloader=====");
 
