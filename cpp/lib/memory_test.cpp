@@ -32,9 +32,10 @@ bool do_test_memory(void* _start, void* _end) {
 		if ((uint32_t) mem % 0x100000 == 0) {
 			write_segment((uint32_t) mem);
 		}
-		if(*mem != static_cast<Type>(rand(rand_seed))) {
-			printf("Error at %x \n", mem);
-			write_segment((uint32_t) mem);
+		auto next = rand(rand_seed);
+		auto read = *mem;
+		if (read != static_cast<Type>(next)) {
+			printf("Error at 0x%p: expect 0x%p, got 0x%p\n", mem, next, read);
 			return false;
 		}
 		mem++;

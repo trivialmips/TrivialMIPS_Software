@@ -69,7 +69,7 @@ void *copy_from_flash(void *addr) {
     auto off = (phdr->p_vaddr - phdr->p_paddr);
 
     while (phdr < last_phdr) {
-        printf("Copying %d bytes from offset 0x%x to address 0x%p\n",
+        printf("Copying %d bytes from offset 0x%p to address 0x%p\n",
                phdr->p_filesz, phdr->p_offset, phdr->p_paddr);
         auto *dest = reinterpret_cast<byte_t *>(phdr->p_paddr);
         auto *source =
@@ -163,7 +163,7 @@ int _entry() {
         } else if (switches & DEVICE_OCM) {
             puts("On-Chip-Memory");
             // do nothing
-            boot_addr(MEM_START_ADDR);
+            boot_addr(OCM_START_ADDR);
         } else {
             puts("Not Selected");
             panic();

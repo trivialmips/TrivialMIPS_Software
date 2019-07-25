@@ -5,6 +5,9 @@
 
 extern byte_t _bss, _bss_end;
 
+#define DO_CONCAT(A, B) A#B
+#define CONCAT(A, B) DO_CONCAT(A, B)
+
 void _main() {
 
     init_serial();
@@ -12,6 +15,8 @@ void _main() {
     write_segment(0x04);
 
     puts("*****TrivialMIPS Bare Metal System*****");
+
+    puts("Compilation time: " __TIME__ " " __DATE__);
 
     write_segment(0x05);
 

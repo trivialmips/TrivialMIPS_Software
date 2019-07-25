@@ -28,6 +28,8 @@ export CC CXX AR CFLAGS CXXFLAGS
 
 all: bootrom sram
 
+.PHONY: main.o
+
 bootrom: $(COES)
 
 sram: $(BASES)  #$(EXTS)
