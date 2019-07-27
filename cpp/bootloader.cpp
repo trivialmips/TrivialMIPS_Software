@@ -16,9 +16,18 @@ const byte_t CHECK_SRAM = 0x80;   // switch 8
 extern byte_t _mem_start, _mem_end;
 extern byte_t _mem_avail_start, _mem_avail_end;
 
+void toggle_kseg0_cacheability(bool cacheable) {
+    uint32_t cp0_config0;
+    asm volatile("mfc0 %0, $16, 0;" :"=r"(cp0_config0));
+    cp0_config0 &= ~0x7; // remove last 3 bits (K0)
+    cp0_config0 |= cacheable ? 0x3 : 0x2; // set last 3 bits (K0)
+    asm volatile("mtc0 %0, $16, 0;" ::"r"(cp0_config0));
+}
+
 void boot_addr(void *addr) {
     printf("Booting from address 0x%p...\n", addr);
     puts("=====Exiting TrivialBootloader=====");
+    toggle_kseg0_cacheability(true);
     asm volatile("jr %0;" ::"r"(addr));
 }
 
@@ -109,6 +118,8 @@ void *load_from_uart() {
 
 
 int _entry() {
+
+    toggle_kseg0_cacheability(false);
 
     write_segment(0x11000001);
     puts("Waiting for 2 seconds...");
