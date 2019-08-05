@@ -1,6 +1,8 @@
 #ifndef __EXCEPTION_H__
 #define __EXCEPTION_H__
 
+#include <stdint.h>
+
 __attribute__((section(".rodata")))
 const char* EXCEPTION_MESSAGES[32] = {
     "Interrupt",
@@ -36,5 +38,15 @@ const char* EXCEPTION_MESSAGES[32] = {
     "Cache error",
     ""
 };
+
+typedef struct {
+    uint32_t padding[4];
+    uint32_t cp0_epc;
+    uint32_t cp0_cause;
+    uint32_t cp0_status;
+    uint32_t cp0_badvaddr;
+    uint32_t cp0_ebase;
+    uint32_t gpr[32];
+} trapframe_t;
 
 #endif

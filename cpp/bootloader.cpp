@@ -10,6 +10,7 @@ const byte_t DEVICE_RAM = 0x2;    // switch 2
 const byte_t DEVICE_OCM = 0x4;    // switch 3
 const byte_t DEVICE_UART = 0x8;   // switch 4
 const byte_t DUMP_MODE = 0x10;     // switch 5
+const byte_t WAIT_BOOT = 0x20;     // switch 6
 const byte_t BZERO_MEM = 0x40;     // switch 7
 const byte_t CHECK_SRAM = 0x80;   // switch 8
 
@@ -122,10 +123,14 @@ int _entry() {
     toggle_kseg0_cacheability(false);
 
     write_segment(0x11000001);
-    puts("Waiting for 2 seconds...");
 
-    auto now = read_word(TIMER_CYCLE_ADDR);
-    while (read_word(TIMER_CYCLE_ADDR) - now < 200000000);
+    auto switches = (byte_t) read_switches();
+
+    if (switches & WAIT_BOOT) {
+        puts("Waiting for 2 seconds...");
+        auto now = read_word(TIMER_CYCLE_ADDR);
+        while (read_word(TIMER_CYCLE_ADDR) - now < 200000000);
+    }
 
     puts("=====Entering TrivialBootloader=====");
 
@@ -133,7 +138,7 @@ int _entry() {
 
     write_segment(0x11000002);
 
-    auto switches = (byte_t) read_switches();
+    switches = (byte_t) read_switches();
 
     if (switches & CHECK_SRAM) {
         if (!test_memory(&_mem_avail_start, &_mem_avail_end)) {

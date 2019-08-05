@@ -13,6 +13,8 @@ typedef uint16_t    hword_t;
 typedef uint32_t    word_t;
 typedef uint64_t    dword_t;
 
+#define TLB_COUNT               16
+
 #define CPU_COUNT_PER_US        1000 // tentative
 
 #define ADDR(addr)              ((void*)addr)

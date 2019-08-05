@@ -69,7 +69,7 @@ SECTIONS
     {
         _bss = .;
         *(.dynbss)
-        *(.bss)
+        *(.bss*)
         *(COMMON)
         _bss_end = .;
     } > DATA_AREA

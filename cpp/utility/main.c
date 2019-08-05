@@ -59,9 +59,41 @@ word_t _get_cause() {
     return n;
 }
 
-void _exception_handler() {
-    word_t code = (_get_cause() >> 2) & 0xF;
-    auto epc = _get_epc();
-    printf("An exception occurred, with epc 0x%x and cause %d (%s).\n", epc, code, EXCEPTION_MESSAGES[code]);
-    write_led((uint16_t) epc);
+void print_trapframe(trapframe_t *tf) {
+    for(int i = 1; i < 32; ++i) {
+        printf("Register $%d: %p\n", i, tf->gpr[i]);
+    }
+    printf("EPC: %p, Cause: %p, Status: %p, BadVAddr: %p, EBase: %p\n", tf->cp0_epc, tf->cp0_cause, tf->cp0_status, tf->cp0_badvaddr, tf->cp0_ebase);
+}
+
+void print_tlb() {
+    for (uint8_t i = 0; i < TLB_COUNT; ++i) {
+        uint32_t entry_hi, entry_lo_1, entry_lo_2;
+        asm volatile(
+            "mtc0 %3, $0, 0\n"
+            "tlbwr\n"
+            "mfc0 %0, $10, 0\n"
+            "mfc0 %1, $2, 0\n"
+            "mfc0 %2, $3, 0\n"
+            :"=r"(entry_hi), "=r"(entry_lo_1), "=r"(entry_lo_2)
+            :"r"(i)
+        );
+        printf("TLB item %d: EntryHi %p, EntryLo1: %p, EntryLo2: %p\n", i, entry_hi, entry_lo_1, entry_lo_2);
+    }
+}
+
+void _exception_handler(trapframe_t *tf, bool assertion) {
+    puts("*****TrivialMIPS Bare Metal System*****");
+    if (assertion) {
+        puts("CPU internal assertion failed, abort.");
+        write_segment(0xdeaddead);
+    } else {
+        word_t code = (_get_cause() >> 2) & 0xF;
+        auto epc = _get_epc();
+        printf("An exception occurred, with EPC 0x%x and Cause %d (%s).\n", epc, code, EXCEPTION_MESSAGES[code]);
+        write_led((uint16_t) epc);
+    }
+    print_trapframe(tf);
+    print_tlb();
+    puts("*****System HANG*****");
 }
