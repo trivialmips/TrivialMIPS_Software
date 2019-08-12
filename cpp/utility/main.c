@@ -71,7 +71,7 @@ void print_tlb() {
         uint32_t entry_hi, entry_lo_1, entry_lo_2;
         asm volatile(
             "mtc0 %3, $0, 0\n"
-            "tlbwr\n"
+            "tlbr\n"
             "mfc0 %0, $10, 0\n"
             "mfc0 %1, $2, 0\n"
             "mfc0 %2, $3, 0\n"
